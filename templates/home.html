@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+</head>
+<body>
+    <div class="container">
+        {% block y %}
+            {% if session.email %}
+                You are Register {{ session.email }} <a href="/logout">logout</a>.
+            {% else %}
+                You are not Register. <a href="/login">login</a>.
+            {% endif %}
+        {% endblock %}
+    </div>
+</body>
+</html>
