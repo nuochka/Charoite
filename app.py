@@ -53,7 +53,7 @@ def login():
         user = users_collection.find_one({'email': email, 'password': password})
         if user:
             flash('Login successful.', 'success')
-            return redirect("/home")  # Перенаправление на страницу '/home' при успешном входе
+            return redirect("/home")  #Redirecting to home page after successful login
         else:
             flash('Invalid email or password. Please try again.', 'danger')
 
