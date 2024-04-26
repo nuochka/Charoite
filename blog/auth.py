@@ -13,17 +13,15 @@ def auth(db):
             email = request.form['email']
             password = request.form['password']
 
-            # Record the user email
-            session["email"] = request.form.get("email")
-
             # Check if the email and password match
-            user = users_collection.find_one({'email': email, 'password': password})
+            user = users_collection.find_one({'email': email})
             if user:
                 #Retrieve the hashed password
                 hashed_password  = user['password']
 
                 #Verify the password using bcrypt
                 if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+                    session["email"] = email
                     flash('Login successful.', 'success')
                     return redirect("/home")  #Redirecting to home page after successful login
                 else:
