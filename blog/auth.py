@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash, session
+import bcrypt
+import re
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -17,8 +19,15 @@ def auth(db):
             # Check if the email and password match
             user = users_collection.find_one({'email': email, 'password': password})
             if user:
-                flash('Login successful.', 'success')
-                return redirect("/home")  #Redirecting to home page after successful login
+                #Retrieve the hashed password
+                hashed_password  = user['password']
+
+                #Verify the password using bcrypt
+                if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+                    flash('Login successful.', 'success')
+                    return redirect("/home")  #Redirecting to home page after successful login
+                else:
+                    flash('Invalid email or password. Please try again.', 'danger')
             else:
                 flash('Invalid email or password. Please try again.', 'danger')
 
@@ -36,8 +45,13 @@ def auth(db):
                 flash('Email already exists. Please use a different one.', 'danger')
             elif users_collection.find_one({'username': username}):
                 flash('Username already exists. Please choose a different one.', 'danger')
+            elif len(password) < 6:
+                flash('Password is too short.', 'danger')
+            elif not re.search(r'\d', password) or not re.search(r'[a-zA-Z]', password):
+                flash('Password must contain both letters and digits', 'danger')
             else:
-                users_collection.insert_one({'username': username, 'email': email, 'password': password})
+                hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                users_collection.insert_one({'username': username, 'email': email, 'password': hashed})
                 flash('Registration completed successfully.', 'success')
                 return redirect(url_for('auth.login'))
         return render_template("register.html")
