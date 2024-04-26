@@ -13,7 +13,7 @@ def create_app():
     users_collection = db['users']
 
     # Register blueprints
-    app.register_blueprint(views, url_prefix="/")
+    app.register_blueprint(views(db), url_prefix="/")
     app.register_blueprint(auth(db), url_prefix="/")
 
     #Session implementaion
