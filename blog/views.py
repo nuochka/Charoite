@@ -40,7 +40,9 @@ def views(db):
                     'content': text,
                     'author': author,
                     'created_date': created_date,
-                    'comments': []
+                    'comments': [],
+                    'likes': 0,
+                    'liked_by': []
                 }
 
                 result = posts_collection.insert_one(post_data)
@@ -144,6 +146,33 @@ def views(db):
             flash(f"An error occurred: {str(e)}", "error")
 
         return redirect(url_for('views.home')) 
+
+    @views_bp.route("/like-post/<post_id>", methods=['POST'])
+    def like_post(post_id):
+        try:
+            current_user = session.get('email')
+            
+            post = posts_collection.find_one({'_id': post_id})
+
+            if not post:
+                flash('Post not found', 'error')
+                return redirect(url_for('views.home'))
+            
+            liked_by = post.get('liked_by', [])
+
+            if current_user in liked_by:
+                liked_by.remove(current_user)
+                posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': -1}})
+                flash('Post unliked successfully', 'success')
+            else:
+                liked_by.append(current_user)
+                posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': 1}})
+                flash('Post liked successfully', 'success')
+
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", "error")
+
+        return redirect(url_for('views.home'))
 
 
     return views_bp

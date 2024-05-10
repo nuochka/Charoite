@@ -22,6 +22,13 @@
                 <div class="card-body">
                     <div class="card-text">{{ post.content }}</div>
                     <br />
+                    <form method="POST" action="{{ url_for('views.like_post', post_id=post._id) }}">
+                        {% if session.email not in post.liked_by %}
+                            <button type="submit" class="btn btn-sm btn-primary">Like</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Unlike</button>
+                        {% endif %}
+                    </form>
                     {% if post.comments %}
                         <div class="comments-section">
                             <h5>Comments:</h5>
@@ -55,7 +62,10 @@
                         <button type="submit" class="btn btn-primary">Comment</button>
                     </form>
                 </div>
-                <div class="card-footer text-muted">{{ post.created_date }}</div>
+                <div class="card-footer text-muted">
+                    {{ post.created_date }}
+                    <span class="ml-3">Likes: {{ post.likes }}</span>
+                </div>
             </div>
             <br>
         {% endfor %}
