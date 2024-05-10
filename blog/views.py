@@ -8,6 +8,7 @@ views_bp = Blueprint("views", __name__)
 def views(db):
 
     posts_collection = db['posts']
+    comments_colelction = db['comments']
 
     @views_bp.before_request
     def load_user():
@@ -38,7 +39,8 @@ def views(db):
                     '_id': post_id,
                     'content': text,
                     'author': author,
-                    'created_date': created_date
+                    'created_date': created_date,
+                    'comments': []
                 }
 
                 result = posts_collection.insert_one(post_data)
@@ -72,5 +74,36 @@ def views(db):
                         flash("Failed to delete post", "error")
         except Exception as e:
             flash(f"An error occurred: {str(e)}", "error")
+        return redirect(url_for('views.home'))
+    
+
+    @views_bp.route("/create-comment/<post_id>", methods=['POST'])
+    def create_comment(post_id):
+        text = request.form.get('text')
+        
+        if not text:
+            flash("Comment cannot be empty.", "error")
+        else:
+            author = session.get('email')
+            created_date = datetime.datetime.now()
+            post = posts_collection.find_one({'_id': post_id})
+            
+            if post:
+                comment_data = {
+                    'author': author,
+                    'text': text,
+                    'created_date': created_date
+                }
+
+                # Add new comment to the post.
+                posts_collection.update_one({'_id': post_id}, {'$push': {'comments': comment_data}})
+                flash('Comment added successfully.', 'success')
+            else:
+                flash('Post does not exist.', 'error')
+
+        return redirect(url_for('views.home'))
+    
+    @views_bp.route("/delete-comment/<comment_id>")
+    def delete_comment(comment_id):
         return redirect(url_for('views.home'))
     return views_bp
