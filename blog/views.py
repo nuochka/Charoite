@@ -163,11 +163,11 @@ def views(db):
             if current_user in liked_by:
                 liked_by.remove(current_user)
                 posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': -1}})
-                flash('Post unliked successfully', 'success')
+                return "0"
             else:
                 liked_by.append(current_user)
                 posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': 1}})
-                flash('Post liked successfully', 'success')
+                return "1"
 
         except Exception as e:
             flash(f"An error occurred: {str(e)}", "error")

@@ -22,13 +22,11 @@
                 <div class="card-body">
                     <div class="card-text">{{ post.content }}</div>
                     <br />
-                    <form method="POST" action="{{ url_for('views.like_post', post_id=post._id) }}">
                         {% if session.email not in post.liked_by %}
-                            <button type="submit" class="btn btn-sm btn-primary">Like</button>
+                            <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}"  class="btn btn-sm btn-primary like-btn">Like</button>
                         {% else %}
-                            <button type="submit" class="btn btn-sm btn-outline-primary">Unlike</button>
+                        <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm btn-outline-primary like-btn">Unlike</button>
                         {% endif %}
-                    </form>
                     {% if post.comments %}
                         <div class="comments-section">
                             <h5>Comments:</h5>
@@ -64,10 +62,12 @@
                 </div>
                 <div class="card-footer text-muted">
                     {{ post.created_date }}
-                    <span class="ml-3">Likes: {{ post.likes }}</span>
+                    <span class="ml-3" id="{{ 'likes_amount_' + post._id }}">Likes: {{ post.likes }}</span>
                 </div>
             </div>
             <br>
         {% endfor %}
     </div>
+
+    <script src="/file/scripts/posts.js" type="module"></script>
 {% endblock %}
