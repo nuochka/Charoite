@@ -53,7 +53,7 @@
                     {% else %}
                         <p>No comments yet.</p>
                     {% endif %}
-                    <form class="mt-3" method="POST" action="{{ url_for('views.create_comment', post_id=post._id) }}">
+                    <form class="mt-3" method="POST" action="{{ url_for('views.create_comment', post_id=post._id | string) }}">
                         <div class="form-group">
                             <input type="text" name="text" class="form-control" placeholder="Write a comment...">
                         </div>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="card-footer text-muted">
                     {{ post.created_date }}
-                    <span class="ml-3" id="{{ 'likes_amount_' + post._id }}">Likes: {{ post.likes }}</span>
+                    <span class="ml-3" id="{{ 'likes_amount_' + post._id | string }}">Likes: {{ post.likes }}</span>
                 </div>
             </div>
             <br>

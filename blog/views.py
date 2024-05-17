@@ -82,13 +82,14 @@ def views(db):
     @views_bp.route("/create-comment/<post_id>", methods=['POST'])
     def create_comment(post_id):
         text = request.form.get('text')
+        post_id_obj = ObjectId(post_id)
         
         if not text:
             flash("Comment cannot be empty.", "error")
         else:
             author = session.get('email')
             created_date = datetime.datetime.now()
-            post = posts_collection.find_one({'_id': post_id})
+            post = posts_collection.find_one({'_id': ObjectId(post_id_obj)})
             
             if post:
                 comment_data = {
@@ -98,7 +99,7 @@ def views(db):
                 }
 
                 # Add new comment to the post.
-                posts_collection.update_one({'_id': post_id}, {'$push': {'comments': comment_data}})
+                posts_collection.update_one({'_id': post_id_obj}, {'$push': {'comments': comment_data}})
                 flash('Comment added successfully.', 'success')
             else:
                 flash('Post does not exist.', 'error')
@@ -107,12 +108,13 @@ def views(db):
     
     @views_bp.route("/delete-comment/<post_id>", methods=['POST'])
     def delete_comment(post_id):
+        post_id_obj = ObjectId(post_id)
         text = request.form.get('text')
         author = session.get('email')
         created_date_str = request.form.get('created_date')  
 
         try:
-            post = posts_collection.find_one({'_id': post_id})
+            post = posts_collection.find_one({'_id': post_id_obj})
             if not post:
                 flash('Post not found')
                 return redirect(url_for('views.home'))
@@ -131,7 +133,7 @@ def views(db):
 
             if comment_deleted:
                 result = posts_collection.update_one(
-                    {'_id': post_id},
+                    {'_id': post_id_obj},
                     {'$set': {'comments': updated_comments}}
                 )
 
