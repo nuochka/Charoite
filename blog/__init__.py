@@ -3,6 +3,7 @@ from flask_session import Session
 from pymongo import MongoClient
 from .auth import auth
 from .views import views
+from .profile import profile
 from .static import static;
 
 def create_app():
@@ -17,6 +18,7 @@ def create_app():
     app.register_blueprint(views(db), url_prefix="/")
     app.register_blueprint(auth(db), url_prefix="/")
     app.register_blueprint(static, url_prefix="/")
+    app.register_blueprint(profile(db), url_prefix="/")
 
     #Session implementaion
     app.config["SESSION_PERMANENT"] = False
