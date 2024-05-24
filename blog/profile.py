@@ -24,7 +24,8 @@ def profile(db):
     def user_profile(email):
         user = users_collection.find_one({'email': email})
         if user:
-            return render_template('profile.html', user=user)
-        return(redirect(url_for('profile.html')))
-
+            user_posts = list(posts_collection.find({'author': user['email']})) 
+            return render_template('profile.html', user=user, posts=user_posts)
+        return redirect(url_for('profile.html'))
+    
     return profile_bp

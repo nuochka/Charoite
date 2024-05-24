@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>User Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container mt-5">
@@ -24,8 +24,28 @@
             </div>
         </div>
     </div>
-    <h1 align="center">{{ user.username}}'s posts</h1>
-    
+    <h1 align="center">{{ user.username }}'s Posts</h1>
+    <div id="posts">
+        {% for post in posts %}
+            <div class="card border-dark mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <a href="/posts/{{ post.author }}">{{ post.author }}</a>
+                    {% if session.email == post.author %}
+                        <div class="btn-group">
+                            <form method="POST" action="{{ url_for('views.delete_post', post_id=post._id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="card-text" id="title">{{ post.title }}</div>
+                </div>
+            </div>
+        {% else %}
+            <p>No posts found.</p>
+        {% endfor %}
+    </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
