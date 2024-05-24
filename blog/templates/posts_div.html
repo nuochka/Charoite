@@ -34,7 +34,7 @@
                                 {% for comment in post.comments %}
                                     <li class="mb-3">
                                         <div>
-                                            <strong><a href="/posts/{{ comment.author }}">{{ comment.author }}</a>:</strong>
+                                            <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
                                             {{ comment.text }}
                                         </div>
                                         <small class="text-muted">{{ comment.created_date }}</small>
