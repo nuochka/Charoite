@@ -19,16 +19,6 @@ def profile(db):
         posts = posts_collection.find()
         return render_template("home.html", posts=posts)
 
-    @profile_bp.route("/my-profile/<email>", methods=['GET', 'POST'])
-    def my_profile(email):
-        current_user_email = session.get('email')
-        if current_user_email == email:
-            user = users_collection.find_one({'email': email})
-            if user:
-                return render_template('profile.html', user=user)
-        flash("User not found", "error")
-        return redirect(url_for('profile.home'))
-    
 
     @profile_bp.route("/profile/<email>", methods=['GET', 'POST'])
     def user_profile(email):

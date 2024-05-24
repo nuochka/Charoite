@@ -11,7 +11,7 @@
           </li>
           {% if session['email'] %}
             <li class="nav-item">
-                <a href="{{ url_for('profile.my_profile', email=session['email']) }}">My Profile</a>
+                <a href="/profile/{{ session.email }}">My profile</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
