@@ -1,18 +1,28 @@
-{% extends "home.html" %} {% block title %}Home{% endblock %} {% block content
-    %}
+{% extends "home.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
     <h1 align="center">Make a Post</h1>
     
     <form method="POST">
-      <textarea name="text" id="text" class="form-control"></textarea>
-      <br />
-      <div align="center">
-        <button type="submit" class="btn btn-lg btn-primary">Post</button>
-      </div>
+        <div class="form-group">
+            <label for="title">Post Title</label>
+            <input type="text" name="title" id="title" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="text">Post Content</label>
+            <textarea name="text" id="text" class="form-control" required></textarea>
+        </div>
+        <br />
+        <div align="center">
+            <button type="submit" class="btn btn-lg btn-primary">Post</button>
+        </div>
     </form>
     <br />
     <div align="center">
-      <a href="/home"
-        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
-      >
+        <a href="/home"><button type="button" class="btn btn-lg btn-secondary">Back</button></a>
     </div>
-    {% endblock %}
+{% endblock %}

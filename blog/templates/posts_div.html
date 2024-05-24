@@ -20,7 +20,8 @@
                     {% endif %}
                 </div>
                 <div class="card-body">
-                    <div class="card-text">{{ post.content }}</div>
+                    <div class="card-text" id = "title">{{ post.title }}</div>
+                    <div class="card-text" id = "post-content">{{ post.content }}</div>
                     <br />
                         {% if session.email not in post.liked_by %}
                             <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}"  class="btn btn-sm btn-primary like-btn">Like</button>

@@ -32,11 +32,13 @@ def views(db):
                 flash('Post cannot be empty', 'danger')
             else:
                 author = session.get('email')
+                title = request.form.get('title')
                 post_id = ObjectId()
                 created_date = datetime.datetime.now()
 
                 post_data = {
                     '_id': post_id,
+                    'title': title,
                     'content': text,
                     'author': author,
                     'created_date': created_date,
