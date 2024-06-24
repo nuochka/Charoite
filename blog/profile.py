@@ -28,4 +28,8 @@ def profile(db):
             return render_template('profile.html', user=user, posts=user_posts)
         return redirect(url_for('profile.html'))
     
+    @profile_bp.route("/edit-profile/<email>", methods=['GET', 'POST'])
+    def edit_profile(email):
+        return redirect(url_for('edit.html'))
+    
     return profile_bp
