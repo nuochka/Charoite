@@ -57,7 +57,7 @@ def auth(db):
 
     @auth_bp.route("/logout")
     def logout():
-        session["email"] = None
+        session["username"] = None
         return redirect(url_for("views.home"))
     
     @auth_bp.route('/home', methods=['GET', 'POST'])
