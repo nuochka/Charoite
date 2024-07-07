@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, flash, redirect, url_for, g
+from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request
 
 profile_bp = Blueprint("profile", __name__)
 
@@ -30,6 +30,26 @@ def profile(db):
     
     @profile_bp.route("/edit-profile/<username>", methods=['GET', 'POST'])
     def edit_profile(username):
-        return redirect(url_for('edit.html'))
+        if 'username' not in session or session['username'] != username:
+            flash('You do not have permission to edit this profile.', 'danger')
+            return redirect(url_for('home'))
+        
+        user = users_collection.find_one({'username': username})
+
+        if request.method == 'POST':
+            new_username = request.form.get('username')
+            new_email = request.form.get('email')
+            new_bio = request.form.get('bio')
+        
+            users_collection.update_one(
+                {'username': username},
+                {'$set': {'username': new_username, 'email': new_email, 'bio': new_bio}}
+            )
+        
+            session['username'] = new_username
+            flash('Profile updated successfully.', 'success')
+            return redirect(url_for('profile.user_profile', username=new_username))
+
+        return render_template('edit_profile.html', user=user)
     
     return profile_bp
