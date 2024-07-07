@@ -20,16 +20,16 @@ def profile(db):
         return render_template("home.html", posts=posts)
 
 
-    @profile_bp.route("/profile/<email>", methods=['GET', 'POST'])
-    def user_profile(email):
-        user = users_collection.find_one({'email': email})
+    @profile_bp.route("/profile/<username>", methods=['GET', 'POST'])
+    def user_profile(username):
+        user = users_collection.find_one({'username': username})
         if user:
             user_posts = list(posts_collection.find({'author': user['email']})) 
             return render_template('profile.html', user=user, posts=user_posts)
         return redirect(url_for('profile.html'))
     
-    @profile_bp.route("/edit-profile/<email>", methods=['GET', 'POST'])
-    def edit_profile(email):
+    @profile_bp.route("/edit-profile/<username>", methods=['GET', 'POST'])
+    def edit_profile(username):
         return redirect(url_for('edit.html'))
     
     return profile_bp

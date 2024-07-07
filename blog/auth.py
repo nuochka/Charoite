@@ -21,7 +21,8 @@ def auth(db):
 
                 #Verify the password using bcrypt
                 if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-                    session["email"] = email
+                    username = user['username']
+                    session["username"] = username
                     flash('Login successful.', 'success')
                     return redirect("/home")  #Redirecting to home page after successful login
                 else:
@@ -63,6 +64,6 @@ def auth(db):
     def home():
         if not session.get("email"):
             return redirect("/login")
-        return render_template('home.html')
+        return render_template('home.html', username=session.get('username'))
     
     return auth_bp

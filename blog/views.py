@@ -31,7 +31,7 @@ def views(db):
             if not text:
                 flash('Post cannot be empty', 'danger')
             else:
-                author = session.get('email')
+                author = session.get('username')
                 title = request.form.get('title')
                 post_id = ObjectId()
                 created_date = datetime.datetime.now()
@@ -66,7 +66,7 @@ def views(db):
             if not post:
                 flash("Post does not exist.", "error")
             else:
-                author = session.get('email')  # Retrieve the author's email from the session
+                author = session.get('username')  # Retrieve the author's email from the session
                 if author != post['author']:
                     flash("You do not have permission to delete this post", "danger")
                 else:
@@ -89,7 +89,7 @@ def views(db):
         if not text:
             flash("Comment cannot be empty.", "error")
         else:
-            author = session.get('email')
+            author = session.get('username')
             created_date = datetime.datetime.now()
             post = posts_collection.find_one({'_id': ObjectId(post_id_obj)})
             
@@ -112,7 +112,7 @@ def views(db):
     def delete_comment(post_id):
         post_id_obj = ObjectId(post_id)
         text = request.form.get('text')
-        author = session.get('email')
+        author = session.get('username')
         created_date_str = request.form.get('created_date')  
 
         try:
@@ -154,7 +154,7 @@ def views(db):
     @views_bp.route("/like-post/<post_id>", methods=['POST'])
     def like_post(post_id):
         try:
-            current_user = session.get('email')
+            current_user = session.get('username')
             
             post = posts_collection.find_one({'_id': post_id})
 
