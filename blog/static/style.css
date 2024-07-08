@@ -1,9 +1,147 @@
-#title{
+#title {
     font-size: 24px;
     font-weight: bold;
 }
 
 #logotype img {
-    height: 30px; 
-    margin-right: 10px; 
+    height: 30px;
+    margin-right: 10px;
+}
+
+#posts {
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+/* Override Bootstrap card styles */
+.card {
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 10px 20px;
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #ffffff;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.card-text {
+    margin: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.card-text#title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.like-btn {
+    margin-top: 10px;
+}
+
+/* posts.css */
+
+.list-unstyled {
+    padding-left: 0;
+}
+
+.list-unstyled .comment-container {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+}
+
+.comment-content {
+    flex: 1; 
+}
+
+.comment-content strong {
+    margin-right: 5px; 
+}
+
+.comment-content small {
+    display: block; 
+    margin-top: 5px; 
+}
+
+.comment-content .btn {
+    margin-left: 10px; 
+}
+
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.btn-group {
+    margin-left: auto;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    font-size: 14px;
+    color: #6c757d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 10px 20px;
+}
+
+.btn-primary, .btn-outline-primary {
+    border-radius: 10px;
+    background-color: #9568aa;
+    border-color: #9568aa;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #614d69;
+    border-color: #614d69;
+}
+
+.btn-danger {
+    border-radius: 20px;
+}
+
+input.form-control {
+    border-radius: 20px;
+}
+
+a {
+    color: #9568aa;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #614d69;
+}
+
+.fas {
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.fas:hover {
+    color: #353a3f;
+}
+
+hr {
+    border-color: rgb(206, 206, 206); 
 }

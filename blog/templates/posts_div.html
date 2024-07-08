@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block content %}
-    <h1 align="center">Posts</h1>
     <div id="posts">
         {% for post in posts %}
             <div class="card border-dark">
@@ -14,7 +13,9 @@
                     {% if session.username == post.author %}
                         <div class="btn-group">
                             <form method="POST" action="{{ url_for('views.delete_post', post_id=post._id) }}">
-                                <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
+                                <button type="submit" class="btn btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                         </div>
                     {% endif %}
@@ -22,34 +23,41 @@
                 <div class="card-body">
                     <div class="card-text" id = "title">{{ post.title }}</div>
                     <div class="card-text" id = "post-content">{{ post.content }}</div>
-                    <br />
                         {% if session.username not in post.liked_by %}
-                            <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}"  class="btn btn-sm btn-primary like-btn">Like</button>
+                            <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}"  class="btn btn-sm">
+                                <i class="fas fa-heart"></i>
+                            </button>
                         {% else %}
                         <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm btn-outline-primary like-btn">Unlike</button>
                         {% endif %}
+                        <hr />
                     {% if post.comments %}
                         <div class="comments-section">
                             <h5>Comments:</h5>
                             <ul class="list-unstyled">
                                 {% for comment in post.comments %}
                                     <li class="mb-3">
-                                        <div>
-                                            <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
-                                            {{ comment.text }}
+                                        <div class="comment-container">
+                                            <div class="comment-content">
+                                                <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
+                                                {{ comment.text }}
+                                                <small class="text-muted">{{ comment.created_date }}</small>
+                                            </div>
+                                            {% if session.username == comment.author or session.email == post.author %}
+                                                <form method="POST" action="{{ url_for('views.delete_comment', post_id=post._id) }}">
+                                                    <input type="hidden" name="text" value="{{ comment.text }}">
+                                                    <input type="hidden" name="author" value="{{ comment.author }}">
+                                                    <input type="hidden" name="created_date" value="{{ comment.created_date }}">
+                                                    <button type="submit" class="btn btn-sm">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
                                         </div>
-                                        <small class="text-muted">{{ comment.created_date }}</small>
-                                        {% if session.username == comment.author or session.email == post.author %}
-                                            <form method="POST" action="{{ url_for('views.delete_comment', post_id=post._id) }}">
-                                                <input type="hidden" name="text" value="{{ comment.text }}">
-                                                <input type="hidden" name="author" value="{{ comment.author }}">
-                                                <input type="hidden" name="created_date" value="{{ comment.created_date }}">
-                                                <button type="submit" class="btn btn-sm btn-danger">Delete Comment</button>
-                                            </form>
-                                        {% endif %}
                                     </li>
                                 {% endfor %}
                             </ul>
+                            
                         </div>
                     {% else %}
                         <p>No comments yet.</p>
