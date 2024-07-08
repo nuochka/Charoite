@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g
 from bson import ObjectId
 import datetime
-import uuid
 
 views_bp = Blueprint("views", __name__)
 
@@ -34,7 +33,7 @@ def views(db):
                 author = session.get('username')
                 title = request.form.get('title')
                 post_id = ObjectId()
-                created_date = datetime.datetime.now()
+                created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
                 post_data = {
                     '_id': post_id,
@@ -90,7 +89,7 @@ def views(db):
             flash("Comment cannot be empty.", "error")
         else:
             author = session.get('username')
-            created_date = datetime.datetime.now()
+            created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
             post = posts_collection.find_one({'_id': ObjectId(post_id_obj)})
             
             if post:
