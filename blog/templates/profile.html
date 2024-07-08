@@ -1,65 +1,57 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>User Profile</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>User Profile</h4>
-                    </div>
-                    {% if session.username == user.username %}
-                    <a href="{{ url_for('profile.edit_profile', username=user.username) }}" class="btn btn-sm btn-primary">Edit Profile</a>
-                    {% endif %}
-                    
-                    <div class="card-body">
-                        <div class="profile-details">
-                            <p><strong>Username:</strong> {{ user.username }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>About me:</strong> {{ user.bio }}</p>
-                        </div>
-                    </div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>User Profile</h4>
                 </div>
-            </div>
-            <div class="col-md-8">
-                <h4 align="center">{{ user.username }}'s Posts</h4>
-                <div id="posts">
-                    {% for post in posts %}
-                        <div class="card border-dark mb-3">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <a class="nav-link" href="/posts/{{ post.author }}">{{ post.author }}</a>
-                                {% if session.username == post.author %}
-                                    <div class="btn-group">
-                                        <form method="POST" action="{{ url_for('views.delete_post', post_id=post._id) }}">
-                                            <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
-                                        </form>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="card-body">
-                                <div class="card-text" id="title">{{ post.title }}</div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <p>No posts found.</p>
-                    {% endfor %}
+                <div class="card-body">
+                    {% if session.username == user.username %}
+                        {% if user.profile_photo %}
+                            <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" class="img-fluid" alt="Profile Photo">
+                        {% else %}
+                            <p>No profile photo uploaded yet.</p>
+                        {% endif %}
+                        <a href="{{ url_for('profile.edit_profile', username=user.username) }}" class="btn btn-sm btn-primary">Edit Profile</a>
+                    {% endif %}
+                    <div class="profile-details">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>About me:</strong> {{ user.bio }}</p>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-8">
+            <h4 align="center">{{ user.username }}'s Posts</h4>
+            <div id="posts">
+                {% for post in posts %}
+                    <div class="card border-dark mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <a class="nav-link" href="/posts/{{ post.author }}">{{ post.author }}</a>
+                            {% if session.username == post.author %}
+                                <div class="btn-group">
+                                    <form method="POST" action="{{ url_for('views.delete_post', post_id=post._id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text" id="title">{{ post.title }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No posts found.</p>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 {% endblock %}
