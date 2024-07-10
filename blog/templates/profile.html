@@ -16,11 +16,23 @@
                             <p>No profile photo uploaded yet.</p>
                         {% endif %}
                         <a href="{{ url_for('profile.edit_profile', username=user.username) }}" class="btn btn-sm btn-primary w-100 mt-3 my-3">Edit Profile</a>
+                    {% else %}
+                        {% if session.username %}
+                        <form action="{{ url_for('profile.add_friend', username=user.username) }}" method="POST">
+                            <button type="submit" class="btn btn-sm btn-primary w-100 mt-3 my-3">Add Friend</button>
+                        </form>                                             
+                        {% endif %}
                     {% endif %}
                     <div class="profile-details">
                         <p><strong>Username:</strong> {{ user.username }}</p>
                         <p><strong>Email:</strong> {{ user.email }}</p>
                         <p><strong>About me:</strong> {{ user.bio }}</p>
+                        <p><strong>Friends:</strong></p>
+                        <ul>
+                            {% for friend in friends %}
+                                <li>{{ friend.username }}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
             </div>

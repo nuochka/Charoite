@@ -91,5 +91,20 @@ def profile(db):
 
         flash('Allowed file types are png, jpg, jpeg, gif', 'danger')
         return redirect(request.url)
+    
+
+    @profile_bp.route('/profile/add_friend/<username>', methods=['POST'])
+    def add_friend(username):
+        if 'username' in session:
+            username = session['username']
+            friend_username = request.form.get('friend_username')
+            if username and friend_username:
+                user = users_collection.find_one({'username': username})
+                friend = users_collection.find_one({'username': friend_username})
+                if user and friend and friend['username'] != user['username']:
+                    users_collection.update_one({'_id': user['_id']}, {'$addToSet': {'friends': friend['username']}})
+                    users_collection.update_one({'_id': friend['_id']}, {'$addToSet': {'friends': user['username']}})
+                    return redirect(url_for('profile', username=friend['username']))
+        return redirect(url_for('profile.home'))
 
     return profile_bp
