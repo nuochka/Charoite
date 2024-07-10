@@ -21,16 +21,16 @@
                     {% endif %}
                 </div>
                 <div class="card-body">
-                    <div class="card-text" id = "title">{{ post.title }}</div>
-                    <div class="card-text" id = "post-content">{{ post.content }}</div>
-                        {% if session.username not in post.liked_by %}
-                            <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}"  class="btn btn-sm">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                        {% else %}
+                    <div class="card-text" id="title">{{ post.title }}</div>
+                    <div class="card-text" id="post-content">{{ post.content }}</div>
+                    {% if session.username not in post.liked_by %}
+                        <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    {% else %}
                         <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm btn-outline-primary like-btn">Unlike</button>
-                        {% endif %}
-                        <hr />
+                    {% endif %}
+                    <hr />
                     {% if post.comments %}
                         <div class="comments-section">
                             <h5>Comments:</h5>
@@ -57,17 +57,18 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                            
                         </div>
                     {% else %}
                         <p>No comments yet.</p>
                     {% endif %}
-                    <form class="mt-3" method="POST" action="{{ url_for('views.create_comment', post_id=post._id | string) }}">
-                        <div class="form-group">
-                            <input type="text" name="text" class="form-control" placeholder="Write a comment...">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Comment</button>
-                    </form>
+                    {% if session.username %}
+                        <form class="mt-3" method="POST" action="{{ url_for('views.create_comment', post_id=post._id | string) }}">
+                            <div class="form-group">
+                                <input type="text" name="text" class="form-control" placeholder="Write a comment...">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Comment</button>
+                        </form>
+                    {% endif %}
                 </div>
                 <div class="card-footer text-muted">
                     {{ post.created_date }}
