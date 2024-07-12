@@ -17,11 +17,21 @@
                         {% endif %}
                         <a href="{{ url_for('profile.edit_profile', username=user.username) }}" class="btn btn-sm btn-primary w-100 mt-3 my-3">Edit Profile</a>
                     {% else %}
-                        {% if session.username %}
-                        <form action="{{ url_for('profile.add_friend', username=user.username) }}" method="POST">
-                            <button type="submit" class="btn btn-sm btn-primary w-100 mt-3 my-3">Add Friend</button>
-                        </form>                                             
+                    {% if session.username %}
+                        {% if user.username != session.username %}
+                            {% if session.username in user.friends %}
+                                <form action="{{ url_for('profile.remove_friend', username=user.username) }}" method="POST">
+                                    <input type="hidden" name="friend_username" value="{{ user.username }}">
+                                    <button type="submit" class="btn btn-sm btn-danger w-100 mt-3 my-3">Remove Friend</button>
+                                </form>
+                            {% else %}
+                                <form action="{{ url_for('profile.add_friend', username=user.username) }}" method="POST">
+                                    <input type="hidden" name="friend_username" value="{{ user.username }}">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100 mt-3 my-3">Add Friend</button>
+                                </form>
+                            {% endif %}
                         {% endif %}
+                    {% endif %}
                     {% endif %}
                     <div class="profile-details">
                         <p><strong>Username:</strong> {{ user.username }}</p>
@@ -29,8 +39,8 @@
                         <p><strong>About me:</strong> {{ user.bio }}</p>
                         <p><strong>Friends:</strong></p>
                         <ul>
-                            {% for friend in friends %}
-                                <li>{{ friend.username }}</li>
+                            {% for friend in user.friends %}
+                                <li>{{ friend }}</li>
                             {% endfor %}
                         </ul>
                     </div>
