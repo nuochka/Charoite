@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g
+from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g, jsonify
 from bson import ObjectId
 import datetime
 
@@ -155,27 +155,25 @@ def views(db):
         try:
             current_user = session.get('username')
             
-            post = posts_collection.find_one({'_id': post_id})
+            post_id_obj = ObjectId(post_id)
+            post = posts_collection.find_one({'_id': post_id_obj})
 
             if not post:
-                flash('Post not found', 'error')
-                return redirect(url_for('views.home'))
+                return jsonify({'error': 'Post not found'}), 404
             
             liked_by = post.get('liked_by', [])
 
             if current_user in liked_by:
                 liked_by.remove(current_user)
-                posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': -1}})
-                return "0"
+                posts_collection.update_one({'_id': post_id_obj}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': -1}})
+                return jsonify({'status': 'unliked'}), 200
             else:
                 liked_by.append(current_user)
-                posts_collection.update_one({'_id': post['_id']}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': 1}})
-                return "1"
+                posts_collection.update_one({'_id': post_id_obj}, {'$set': {'liked_by': liked_by}, '$inc': {'likes': 1}})
+                return jsonify({'status': 'liked'}), 200
 
         except Exception as e:
-            flash(f"An error occurred: {str(e)}", "error")
-
-        return redirect(url_for('views.home'))
+            return jsonify({'error': str(e)}), 500
 
 
     return views_bp

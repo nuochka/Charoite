@@ -1,14 +1,14 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const likeButtons = document.querySelectorAll('.like-btn');
 
     likeButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
             const postUrl = button.getAttribute('data-post-url');
             const postId = button.getAttribute('data-post-id');
-            const likesAmount = document.getElementById('likes_amount_' + postId);
-            
+            const likesAmountElement = document.getElementById('likes_amount_' + postId);
+            const heartIcon = button.querySelector('i');
+
             fetch(postUrl, {
                 method: 'POST',
                 headers: {
@@ -18,14 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => response.json())
             .then(data => {
-                if (data === 0) {
-                    button.setAttribute("class", "btn-primary");
-                    button.textContent = "Like"
-                    likesAmount.textContent = "Likes: " + (parseInt(likesAmount.textContent.split(": ")[1]) - 1).toString()
-                } else {
-                    button.setAttribute("class", "btn-outline-primary");
-                    button.textContent = "Unlike"
-                    likesAmount.textContent = "Likes: " + (parseInt(likesAmount.textContent.split(": ")[1]) + 1).toString()
+                let currentLikes = parseInt(likesAmountElement.textContent.trim());
+
+                if (data.status === 'unliked') {
+                    heartIcon.classList.remove('text-danger');
+                    heartIcon.classList.add('text-secondary');
+                    likesAmountElement.textContent = (currentLikes - 1).toString();
+                } else if (data.status === 'liked') {
+                    heartIcon.classList.remove('text-secondary');
+                    heartIcon.classList.add('text-danger');
+                    likesAmountElement.textContent = (currentLikes + 1).toString();
                 }
             })
             .catch(error => {

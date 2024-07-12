@@ -23,12 +23,11 @@
                 <div class="card-body">
                     <div class="card-text" id="title">{{ post.title }}</div>
                     <div class="card-text" id="post-content">{{ post.content }}</div>
-                    {% if session.username not in post.liked_by %}
-                        <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm">
-                            <i class="fas fa-heart"></i>
+                    {% if session.username %}
+                        <button type="submit" id="like-btn-{{ post._id }}" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm like-btn">
+                            <i class="fas fa-heart {% if session.username in post.liked_by %}text-danger{% else %}text-secondary{% endif %}"></i>
+                            <span class="ml-1" id="likes_amount_{{ post._id }}">{{ post.likes }}</span>
                         </button>
-                    {% else %}
-                        <button type="submit" id="likes" data-post-url="{{ url_for('views.like_post', post_id=post._id) }}" data-post-id="{{ post._id }}" class="btn btn-sm btn-outline-primary like-btn">Unlike</button>
                     {% endif %}
                     <hr />
                     {% if post.comments %}
@@ -43,7 +42,7 @@
                                                 {{ comment.text }}
                                                 <small class="text-muted">{{ comment.created_date }}</small>
                                             </div>
-                                            {% if session.username == comment.author or session.email == post.author %}
+                                            {% if session.username == comment.author or session.username == post.author %}
                                                 <form method="POST" action="{{ url_for('views.delete_comment', post_id=post._id) }}">
                                                     <input type="hidden" name="text" value="{{ comment.text }}">
                                                     <input type="hidden" name="author" value="{{ comment.author }}">
@@ -72,7 +71,6 @@
                 </div>
                 <div class="card-footer text-muted">
                     {{ post.created_date }}
-                    <span class="ml-3" id="{{ 'likes_amount_' + post._id | string }}">Likes: {{ post.likes }}</span>
                 </div>
             </div>
             <br>
