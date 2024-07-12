@@ -80,7 +80,13 @@ def profile(db):
             file_path = os.path.join(current_app.root_path, UPLOAD_FOLDER, filename)
             file.save(file_path)
 
-            # Updating user profile in DB
+            # Updating user profile in DB and deleting previous photo if exists
+            user = users_collection.find_one({'username': session['username']})
+            if user and 'profile_photo' in user:
+                previous_photo_path = os.path.join(current_app.root_path, UPLOAD_FOLDER, user['profile_photo'])
+                if os.path.exists(previous_photo_path):
+                    os.remove(previous_photo_path)
+
             users_collection.update_one(
                 {'username': session['username']},
                 {'$set': {'profile_photo': filename}}
@@ -91,7 +97,7 @@ def profile(db):
 
         flash('Allowed file types are png, jpg, jpeg, gif', 'danger')
         return redirect(request.url)
-    
+
 
     @profile_bp.route('/profile/add_friend/<username>', methods=['POST'])
     def add_friend(username):
