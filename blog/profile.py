@@ -123,7 +123,7 @@ def profile(db):
                         'type': 'follow',
                         'from_user': current_username,
                         'to_user': username,
-                        'message': f'{friend_username} has started following you.',
+                        'message': f'{current_username} has started following you.',
                         'timestamp': datetime.utcnow()
                     }
                     users_collection.update_one(
@@ -163,6 +163,5 @@ def profile(db):
                 notifications = user.get('notifications', [])
                 return jsonify({'notifications': notifications})
         return jsonify({'notifications': []})
-
     
     return profile_bp
