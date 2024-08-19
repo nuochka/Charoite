@@ -99,8 +99,8 @@ def profile(db):
         return redirect(request.url)
 
 
-    @profile_bp.route('/profile/add_friend/<username>', methods=['POST'])
-    def add_friend(username):
+    @profile_bp.route('/profile/follow/<username>', methods=['POST'])
+    def follow(username):
         if 'username' in session:
             current_username = session['username']
             friend_username = request.form.get('friend_username')
@@ -108,13 +108,19 @@ def profile(db):
                 user = users_collection.find_one({'username': current_username})
                 friend = users_collection.find_one({'username': friend_username})
                 if user and friend and friend['username'] != user['username']:
-                    users_collection.update_one({'_id': user['_id']}, {'$addToSet': {'friends': friend['username']}})
-                    users_collection.update_one({'_id': friend['_id']}, {'$addToSet': {'friends': user['username']}})
+                    users_collection.update_one(
+                        {'_id': user['_id']}, 
+                        {'$addToSet': {'following': friend['username']}}
+                    )
+                    users_collection.update_one(
+                        {'_id': friend['_id']}, 
+                        {'$addToSet': {'followers': user['username']}}
+                    )
                     return redirect(url_for('profile.user_profile', username=friend['username']))
         return redirect(url_for('profile.home'))
-    
-    @profile_bp.route('/profile/remove_friend/<username>', methods=['POST'])
-    def remove_friend(username):
+
+    @profile_bp.route('/profile/unfollow/<username>', methods=['POST'])
+    def unfollow(username):
         if 'username' in session:
             current_username = session['username']
             friend_username = request.form.get('friend_username')
@@ -122,9 +128,16 @@ def profile(db):
                 user = users_collection.find_one({'username': current_username})
                 friend = users_collection.find_one({'username': friend_username})
                 if user and friend:
-                    users_collection.update_one({'_id': user['_id']}, {'$pull': {'friends': friend['username']}})
-                    users_collection.update_one({'_id': friend['_id']}, {'$pull': {'friends': user['username']}})
+                    users_collection.update_one(
+                        {'_id': user['_id']}, 
+                        {'$pull': {'following': friend['username']}}
+                    )
+                    users_collection.update_one(
+                        {'_id': friend['_id']}, 
+                        {'$pull': {'followers': user['username']}}
+                    )
                     return redirect(url_for('profile.user_profile', username=friend['username']))
         return redirect(url_for('profile.home'))
 
+    
     return profile_bp

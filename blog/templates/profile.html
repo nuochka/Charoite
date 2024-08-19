@@ -17,30 +17,34 @@
                         {% endif %}
                         <a href="{{ url_for('profile.edit_profile', username=user.username) }}" class="btn btn-sm btn-primary w-100 mt-3 my-3">Edit Profile</a>
                     {% else %}
-                    {% if session.username %}
-                        {% if user.username != session.username %}
-                            {% if session.username in user.friends %}
-                                <form action="{{ url_for('profile.remove_friend', username=user.username) }}" method="POST">
+                        {% if session.username %}
+                            {% if session.username in user.followers %}
+                                <form action="{{ url_for('profile.unfollow', username=user.username) }}" method="POST">
                                     <input type="hidden" name="friend_username" value="{{ user.username }}">
-                                    <button type="submit" class="btn btn-sm btn-danger w-100 mt-3 my-3">Remove Friend</button>
+                                    <button type="submit" class="btn btn-sm btn-danger w-100 mt-3 my-3">Unfollow</button>
                                 </form>
                             {% else %}
-                                <form action="{{ url_for('profile.add_friend', username=user.username) }}" method="POST">
+                                <form action="{{ url_for('profile.follow', username=user.username) }}" method="POST">
                                     <input type="hidden" name="friend_username" value="{{ user.username }}">
-                                    <button type="submit" class="btn btn-sm btn-primary w-100 mt-3 my-3">Add Friend</button>
+                                    <button type="submit" class="btn btn-sm btn-primary w-100 mt-3 my-3">Follow</button>
                                 </form>
                             {% endif %}
                         {% endif %}
-                    {% endif %}
                     {% endif %}
                     <div class="profile-details">
                         <p><strong>Username:</strong> {{ user.username }}</p>
                         <p><strong>Email:</strong> {{ user.email }}</p>
                         <p><strong>About me:</strong> {{ user.bio }}</p>
-                        <p><strong>Friends:</strong></p>
+                        <p><strong>Following:</strong></p>
                         <ul>
-                            {% for friend in user.friends %}
+                            {% for friend in user.following %}
                                 <li>{{ friend }}</li>
+                            {% endfor %}
+                        </ul>
+                        <p><strong>Followers:</strong></p>
+                        <ul>
+                            {% for follower in user.followers %}
+                                <li>{{ follower }}</li>
                             {% endfor %}
                         </ul>
                     </div>
