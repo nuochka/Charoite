@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, current_app, jsonify
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from bson import ObjectId
 
 profile_bp = Blueprint("profile", __name__)
 UPLOAD_FOLDER = 'static/uploads'
@@ -119,7 +120,9 @@ def profile(db):
                     )
 
                     # Create a notification for the friend
+                    notification_id = ObjectId()
                     notification = {
+                        '_id': notification_id,
                         'type': 'follow',
                         'from_user': current_username,
                         'to_user': username,
@@ -161,7 +164,31 @@ def profile(db):
             user = users_collection.find_one({'username': current_username})
             if user:
                 notifications = user.get('notifications', [])
+                for notification in notifications:
+                    if '_id' in notification and isinstance(notification['_id'], ObjectId):
+                        notification['_id'] = str(notification['_id'])
+
                 return jsonify({'notifications': notifications})
+        
         return jsonify({'notifications': []})
     
+    @profile_bp.route('/profile/notifications/<notification_id>', methods=['POST'])
+    def delete_notification(notification_id):
+        if 'username' in session:
+            current_username = session['username']
+            try:
+                notification_id_obj = ObjectId(notification_id)
+            except Exception as e:
+                return jsonify({'error': 'Invalid notification ID'}), 400
+
+            result = users_collection.update_one(
+                {'username': current_username, 'notifications._id': notification_id_obj},
+                {'$pull': {'notifications': {'_id': notification_id_obj}}}
+            )
+            if result.modified_count > 0:
+                return jsonify({'message': 'Notification deleted successfully'})
+            else:
+                return jsonify({'error': 'Notification not found'}), 404
+        return jsonify({'error': 'User not authenticated'}), 401
+
     return profile_bp
