@@ -1,6 +1,7 @@
 import os
-from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, current_app
+from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, current_app, jsonify
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 profile_bp = Blueprint("profile", __name__)
 UPLOAD_FOLDER = 'static/uploads'
@@ -116,6 +117,20 @@ def profile(db):
                         {'_id': friend['_id']}, 
                         {'$addToSet': {'followers': user['username']}}
                     )
+
+                    # Create a notification for the friend
+                    notification = {
+                        'type': 'follow',
+                        'from_user': current_username,
+                        'to_user': username,
+                        'message': f'{friend_username} has started following you.',
+                        'timestamp': datetime.utcnow()
+                    }
+                    users_collection.update_one(
+                        {'username': username},
+                        {'$push': {'notifications': notification}}
+                    )
+                    
                     return redirect(url_for('profile.user_profile', username=friend['username']))
         return redirect(url_for('profile.home'))
 
@@ -138,6 +153,16 @@ def profile(db):
                     )
                     return redirect(url_for('profile.user_profile', username=friend['username']))
         return redirect(url_for('profile.home'))
+    
+    @profile_bp.route('/profile/notifications', methods=['GET'])
+    def get_notifications():
+        if 'username' in session:
+            current_username = session['username']
+            user = users_collection.find_one({'username': current_username})
+            if user:
+                notifications = user.get('notifications', [])
+                return jsonify({'notifications': notifications})
+        return jsonify({'notifications': []})
 
     
     return profile_bp

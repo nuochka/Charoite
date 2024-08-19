@@ -13,6 +13,10 @@
     max-width: 800px;
 }
 
+.nav-link{
+    display: flex;
+    justify-content: flex-start;
+}
 /* Override Bootstrap card styles */
 .card {
     margin-bottom: 20px;
