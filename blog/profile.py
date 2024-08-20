@@ -1,11 +1,13 @@
 import os
-from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, current_app, jsonify
+from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, jsonify, make_response
 from werkzeug.utils import secure_filename
+from pymongo.errors import PyMongoError
 from datetime import datetime
 from bson import ObjectId
+import gridfs
+
 
 profile_bp = Blueprint("profile", __name__)
-UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
@@ -16,6 +18,7 @@ def allowed_file(filename):
 def profile(db):
     posts_collection = db['posts']
     users_collection = db['users']
+    fs = gridfs.GridFS(db)
 
     @profile_bp.before_request
     def load_user():
@@ -79,19 +82,18 @@ def profile(db):
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.root_path, UPLOAD_FOLDER, filename)
-            file.save(file_path)
 
-            # Updating user profile in DB and deleting previous photo if exists
+            # Remove previous photo if it exists
             user = users_collection.find_one({'username': session['username']})
             if user and 'profile_photo' in user:
-                previous_photo_path = os.path.join(current_app.root_path, UPLOAD_FOLDER, user['profile_photo'])
-                if os.path.exists(previous_photo_path):
-                    os.remove(previous_photo_path)
+                previous_photo_id = user['profile_photo']
+                fs.delete(previous_photo_id)
 
+            # Save new photo
+            file_id = fs.put(file, filename=filename, content_type=file.content_type)
             users_collection.update_one(
                 {'username': session['username']},
-                {'$set': {'profile_photo': filename}}
+                {'$set': {'profile_photo': file_id}}
             )
 
             flash('Photo uploaded successfully', 'success')
@@ -99,6 +101,19 @@ def profile(db):
 
         flash('Allowed file types are png, jpg, jpeg, gif', 'danger')
         return redirect(request.url)
+    
+    @profile_bp.route('/image/<image_id>')
+    def get_image(image_id):
+        if not ObjectId.is_valid(image_id):
+            return "Invalid image ID", 400
+        try:
+            grid_out = fs.get(ObjectId(image_id))
+            response = make_response(grid_out.read())
+            response.mimetype = grid_out.content_type
+            return response
+        except gridfs.NoFile:
+            return "Image not found", 404
+
 
 
     @profile_bp.route('/profile/follow/<username>', methods=['POST'])

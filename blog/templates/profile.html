@@ -11,7 +11,7 @@
                 <div class="card-body">
                     {% if session.username == user.username %}
                         {% if user.profile_photo %}
-                            <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" class="img-fluid" alt="Profile Photo">
+                            <img src="{{ url_for('profile.get_image', image_id=user.profile_photo) }}" class="img-fluid" alt="Profile Photo">
                         {% else %}
                             <p>No profile photo uploaded yet.</p>
                         {% endif %}
