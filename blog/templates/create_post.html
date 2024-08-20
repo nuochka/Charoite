@@ -7,7 +7,7 @@
 {% block content %}
     <h1 align="center">Make a Post</h1>
     
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Post Title</label>
             <input type="text" name="title" id="title" class="form-control" required>
@@ -15,6 +15,10 @@
         <div class="form-group">
             <label for="text">Post Content</label>
             <textarea name="text" id="text" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Upload Image</label>
+            <input type="file" name="image" id="image" class="form-control">
         </div>
         <br />
         <div align="center">

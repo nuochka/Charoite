@@ -1,13 +1,15 @@
-from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g, jsonify
+from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g, jsonify, make_response
+from werkzeug.exceptions import RequestEntityTooLarge
 from bson import ObjectId
 import datetime
+import gridfs
 
 views_bp = Blueprint("views", __name__)
 
 def views(db):
-
     posts_collection = db['posts']
     comments_colelction = db['comments']
+    fs = gridfs.GridFS(db)
 
     @views_bp.before_request
     def load_user():
@@ -26,7 +28,8 @@ def views(db):
     def create_post():
         if request.method == "POST":
             text = request.form.get("text")
-            
+            image = request.files.get("image")
+
             if not text:
                 flash('Post cannot be empty', 'danger')
             else:
@@ -35,6 +38,20 @@ def views(db):
                 post_id = ObjectId()
                 created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
+                image_id = None
+
+                def allowed_file(filename):
+                    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+                    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+                # Save the image in GridFS if it's uploaded
+                if image:
+                    if allowed_file(image.filename):
+                        image_id = fs.put(image, filename=image.filename, content_type=image.content_type)
+                    else:
+                        flash('Invalid file type', 'danger')
+                        return redirect(request.url)
+                    
                 post_data = {
                     '_id': post_id,
                     'title': title,
@@ -43,7 +60,8 @@ def views(db):
                     'created_date': created_date,
                     'comments': [],
                     'likes': 0,
-                    'liked_by': []
+                    'liked_by': [],
+                    'image_id': image_id
                 }
 
                 result = posts_collection.insert_one(post_data)
@@ -53,8 +71,24 @@ def views(db):
                     return redirect(url_for('views.home'))
                 else:
                     flash('Failed to create post', 'danger')
-                
+
         return render_template('create_post.html')
+
+    @views_bp.errorhandler(RequestEntityTooLarge)
+    def handle_file_too_large(error):
+        flash('File size exceeds the maximum limit of 16 MB', 'danger')
+        return redirect(request.url)
+    
+    @views_bp.route('/image/<image_id>')
+    def get_image(image_id):
+        try:
+            grid_out = fs.get(ObjectId(image_id))
+            response = make_response(grid_out.read())
+            response.mimetype = grid_out.content_type
+            return response
+        except gridfs.NoFile:
+            return "Image not found", 404
+
     
     @views_bp.route("/delete-post/<post_id>", methods=['POST'])
     def delete_post(post_id):

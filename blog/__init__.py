@@ -23,6 +23,7 @@ def create_app():
     #Session implementaion
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
     Session(app)
 
     return app

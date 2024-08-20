@@ -17,6 +17,17 @@
     display: flex;
     justify-content: flex-start;
 }
+
+.post-image {
+    max-width: 100%;     
+    height: auto;        
+    max-height: 300px;    
+    object-fit: cover;    
+    display: block;       
+    margin: 0 auto;  
+    display: flex;     
+}
+
 /* Override Bootstrap card styles */
 .card {
     margin-bottom: 20px;
