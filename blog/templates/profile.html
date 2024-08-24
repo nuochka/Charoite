@@ -6,7 +6,7 @@
         <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h4>User Profile</h4>
+                    <h4> {{ user.username }}</h4>
                 </div>
                 <div class="card-body">
                     {% if session.username == user.username %}
@@ -32,21 +32,12 @@
                         {% endif %}
                     {% endif %}
                     <div class="profile-details">
-                        <p><strong>Username:</strong> {{ user.username }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>About me:</strong> {{ user.bio }}</p>
-                        <p><strong>Following:</strong></p>
-                        <ul>
-                            {% for friend in user.following %}
-                                <li>{{ friend }}</li>
-                            {% endfor %}
-                        </ul>
-                        <p><strong>Followers:</strong></p>
-                        <ul>
-                            {% for follower in user.followers %}
-                                <li>{{ follower }}</li>
-                            {% endfor %}
-                        </ul>
+                        <br>
+                        {% if user.bio %}
+                            <p><strong>About me:</strong> {{ user.bio }}</p>
+                        {% endif %}
+                        <p><strong>Following:</strong> {{ user.following | length }}</p> 
+                        <p><strong>Followers:</strong> {{ user.followers | length }}</p> 
                     </div>
                 </div>
             </div>
