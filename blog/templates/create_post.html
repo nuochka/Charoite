@@ -5,16 +5,18 @@
 {% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+
     <h1 align="center">Make a Post</h1>
     
     <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Post Title</label>
-            <input type="text" name="title" id="title" class="form-control" required>
+            <input type="text" name="title" id="title" class="form-control">
         </div>
         <div class="form-group">
             <label for="text">Post Content</label>
-            <textarea name="text" id="text" class="form-control" required></textarea>
+            <textarea name="text" id="text" class="form-control"></textarea>
         </div>
         <div class="form-group">
             <label for="image">Upload Image</label>
@@ -29,4 +31,8 @@
     <div align="center">
         <a href="/home"><button type="button" class="btn btn-lg btn-secondary">Back</button></a>
     </div>
+    
+    <!-- SimpleMDE JS -->
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="/file/scripts/posts.js" type="module"></script>
 {% endblock %}

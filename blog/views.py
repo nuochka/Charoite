@@ -3,6 +3,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 from bson import ObjectId
 import datetime
 import gridfs
+import markdown
 
 views_bp = Blueprint("views", __name__)
 
@@ -21,8 +22,10 @@ def views(db):
     @views_bp.route("/")
     @views_bp.route("/home")
     def home():
-        posts = posts_collection.find()
-        return render_template("home.html", posts = posts)
+        posts = list(posts_collection.find())
+        for post in posts:
+            post['content'] = markdown.markdown(post['content'])
+        return render_template("home.html", posts=posts)
 
     @views_bp.route("/create-post", methods=['GET', 'POST'])
     def create_post():

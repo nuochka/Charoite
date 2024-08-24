@@ -36,3 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var simplemde = new SimpleMDE({
+        element: document.getElementById("text"),
+        autoDownloadFontAwesome: false, 
+        spellChecker: false
+    });
+
+    var textarea = document.getElementById("text");
+    if (textarea) {
+        console.log("SimpleMDE initialized successfully.");
+    } else {
+        console.error("SimpleMDE initialization failed.");
+    }
+});

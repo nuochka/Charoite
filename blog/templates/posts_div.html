@@ -22,7 +22,7 @@
                 </div>
                 <div class="card-body">
                     <div class="card-text" id="title">{{ post.title }}</div>
-                    <div class="card-text" id="post-content">{{ post.content }}</div>
+                    <div class="card-text" id="post-content">{{ post.content | safe }}</div> <!-- Ensure HTML is not escaped -->
                     {% if post.image_id %}
                         <img src="{{ url_for('views.get_image', image_id=post.image_id) }}" class="post-image" alt="Post Image">
                     {% endif %}
@@ -42,7 +42,7 @@
                                         <div class="comment-container">
                                             <div class="comment-content">
                                                 <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
-                                                {{ comment.text }}
+                                                {{ comment.text | safe }} <!-- Ensure HTML is not escaped -->
                                                 <small class="text-muted">{{ comment.created_date }}</small>
                                             </div>
                                             {% if session.username == comment.author or session.username == post.author %}
