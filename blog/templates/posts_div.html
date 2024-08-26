@@ -34,22 +34,22 @@
                     {% endif %}
                     <hr />
                     {% if post.comments %}
-                        <div class="comments-section">
+                        <div class="comments-section mt-3">
                             <h5>Comments:</h5>
                             <ul class="list-unstyled">
-                                {% for comment in post.comments %}
+                                {% if post.comments|length > 0 %}
                                     <li class="mb-3">
                                         <div class="comment-container">
                                             <div class="comment-content">
-                                                <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
-                                                {{ comment.text | safe }} <!-- Ensure HTML is not escaped -->
-                                                <small class="text-muted">{{ comment.created_date }}</small>
+                                                <strong><a href="/profile/{{ post.comments[0].author }}">{{ post.comments[0].author }}</a>:</strong>
+                                                {{ post.comments[0].text | safe }} <!-- Ensure HTML is not escaped -->
+                                                <small class="text-muted">{{ post.comments[0].created_date }}</small>
                                             </div>
-                                            {% if session.username == comment.author or session.username == post.author %}
+                                            {% if session.username == post.comments[0].author or session.username == post.author %}
                                                 <form method="POST" action="{{ url_for('views.delete_comment', post_id=post._id) }}">
-                                                    <input type="hidden" name="text" value="{{ comment.text }}">
-                                                    <input type="hidden" name="author" value="{{ comment.author }}">
-                                                    <input type="hidden" name="created_date" value="{{ comment.created_date }}">
+                                                    <input type="hidden" name="text" value="{{ post.comments[0].text }}">
+                                                    <input type="hidden" name="author" value="{{ post.comments[0].author }}">
+                                                    <input type="hidden" name="created_date" value="{{ post.comments[0].created_date }}">
                                                     <button type="submit" class="btn btn-sm">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -57,7 +57,35 @@
                                             {% endif %}
                                         </div>
                                     </li>
-                                {% endfor %}
+                                    {% if post.comments|length > 1 %}
+                                        <button class="btn btn-sm btn-secondary toggle-comments-btn" data-target="#comments-{{ post._id }}">
+                                            Show More Comments ({{ post.comments|length - 1 }})
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="hidden-comments" id="comments-{{ post._id }}" style="display: none;">
+                                    {% for comment in post.comments[1:] %}
+                                        <li class="mb-3">
+                                            <div class="comment-container">
+                                                <div class="comment-content">
+                                                    <strong><a href="/profile/{{ comment.author }}">{{ comment.author }}</a>:</strong>
+                                                    {{ comment.text | safe }} <!-- Ensure HTML is not escaped -->
+                                                    <small class="text-muted">{{ comment.created_date }}</small>
+                                                </div>
+                                                {% if session.username == comment.author or session.username == post.author %}
+                                                    <form method="POST" action="{{ url_for('views.delete_comment', post_id=post._id) }}">
+                                                        <input type="hidden" name="text" value="{{ comment.text }}">
+                                                        <input type="hidden" name="author" value="{{ comment.author }}">
+                                                        <input type="hidden" name="created_date" value="{{ comment.created_date }}">
+                                                        <button type="submit" class="btn btn-sm">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </div>
                             </ul>
                         </div>
                     {% else %}
