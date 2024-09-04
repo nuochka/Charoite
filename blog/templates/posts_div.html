@@ -22,7 +22,16 @@
                 </div>
                 <div class="card-body">
                     <div class="card-text" id="title">{{ post.title }}</div>
-                    <div class="card-text" id="post-content">{{ post.content | safe }}</div> <!-- Ensure HTML is not escaped -->
+                    <div class="card-text" id="post-content-{{ post._id }}">
+                        {{ post.content | safe }}
+                    </div>
+                    {% if post.content|length > 200 %}
+                        <div class="text-center">
+                            <button class="toggle-content-btn transparent-btn" data-target="#post-content-{{ post._id }}">
+                                Show More
+                            </button>
+                        </div>
+                    {% endif %} 
                     {% if post.image_id %}
                         <img src="{{ url_for('views.get_image', image_id=post.image_id) }}" class="post-image" alt="Post Image">
                     {% endif %}
@@ -58,9 +67,11 @@
                                         </div>
                                     </li>
                                     {% if post.comments|length > 1 %}
-                                        <button class="toggle-comments-btn transparent-btn" data-target="#comments-{{ post._id }}">
-                                            Show More Comments ({{ post.comments|length - 1 }})
-                                        </button>
+                                        <div class="text-center">
+                                            <button class="toggle-comments-btn transparent-btn" data-target="#comments-{{ post._id }}">
+                                                Show More Comments ({{ post.comments|length - 1 }})
+                                            </button>
+                                        </div>
                                     {% endif %}
                                 {% endif %}
                                 <div class="hidden-comments" id="comments-{{ post._id }}" style="display: none;">

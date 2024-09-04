@@ -55,24 +55,58 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const toggleButtons = document.querySelectorAll('.toggle-comments-btn');
+    const toggleContentButtons = document.querySelectorAll('.toggle-content-btn');
+    const toggleCommentsButtons = document.querySelectorAll('.toggle-comments-btn');
 
-    toggleButtons.forEach(button => {
+    toggleContentButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = button.getAttribute('data-target');
+            const postContent = document.querySelector(targetId);
+
+            if (postContent) {
+                if (postContent.style.display === 'none' || postContent.style.display === '') {
+                    postContent.style.display = 'block';
+                    button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Content';
+                } else {
+                    postContent.style.display = 'none';
+                    button.innerHTML = '<i class="fas fa-chevron-down"></i> Show More';
+                }
+            }
+        });
+
+        // Initially hide the content if it's longer than 200 characters
+        const targetId = button.getAttribute('data-target');
+        const postContent = document.querySelector(targetId);
+
+        if (postContent && postContent.innerHTML.length > 200) {
+            postContent.style.display = 'none';
+        }
+    });
+
+    toggleCommentsButtons.forEach(button => {
         button.addEventListener('click', function () {
             const targetId = button.getAttribute('data-target');
             const commentsSection = document.querySelector(targetId);
 
-            if (commentsSection.style.display === 'none') {
-                commentsSection.style.display = 'block';
-                button.classList.remove('show-more');
-                button.classList.add('hide-comments');
-                button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Comments';
-            } else {
-                commentsSection.style.display = 'none';
-                button.classList.remove('hide-comments');
-                button.classList.add('show-more');
-                button.innerHTML = '<i class="fas fa-chevron-down"></i> Show More Comments (' + (commentsSection.querySelectorAll('.comment-container').length) + ')';
+            if (commentsSection) {
+                if (commentsSection.style.display === 'none' || commentsSection.style.display === '') {
+                    commentsSection.style.display = 'block';
+                    button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Comments';
+                } else {
+                    commentsSection.style.display = 'none';
+                    button.innerHTML = '<i class="fas fa-chevron-down"></i> Show More Comments (' + (commentsSection.querySelectorAll('li').length) + ')';
+                }
             }
         });
+
+        // Initially hide the comments section
+        const targetId = button.getAttribute('data-target');
+        const commentsSection = document.querySelector(targetId);
+
+        if (commentsSection) {
+            commentsSection.style.display = 'none';
+        }
     });
 });
+
+
