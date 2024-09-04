@@ -204,6 +204,23 @@ def profile(db):
                 return jsonify({'message': 'Notification deleted successfully'})
             else:
                 return jsonify({'error': 'Notification not found'}), 404
-        return jsonify({'error': 'User not authenticated'}), 401
+        return jsonify({'error': 'User not authenticated'}), 401  
+
+
+    @profile_bp.route('/profile/get_following/<username>', methods=['GET'])
+    def get_following(username):
+        user = users_collection.find_one({'username': username})
+        if user:
+            following = user.get('following', [])
+            return jsonify([{'username': username} for username in following])
+        return jsonify({'error': 'User not found'}), 404
+
+    @profile_bp.route('/profile/get_followers/<username>', methods=['GET'])
+    def get_followers(username):
+        user = users_collection.find_one({'username': username})
+        if user:
+            followers = user.get('followers', [])
+            return jsonify([{'username': username} for username in followers])
+        return jsonify({'error': 'User not found'}), 404
 
     return profile_bp
