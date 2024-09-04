@@ -58,7 +58,7 @@
                                         </div>
                                     </li>
                                     {% if post.comments|length > 1 %}
-                                        <button class="btn btn-sm btn-secondary toggle-comments-btn" data-target="#comments-{{ post._id }}">
+                                        <button class="toggle-comments-btn transparent-btn" data-target="#comments-{{ post._id }}">
                                             Show More Comments ({{ post.comments|length - 1 }})
                                         </button>
                                     {% endif %}
