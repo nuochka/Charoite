@@ -174,3 +174,11 @@ hr {
 .transparent-btn:hover {
     color: #9568aa; 
 }
+
+.error {
+    border-color: red;
+}
+.error-message {
+    color: red;
+    font-size: 0.9em;
+}

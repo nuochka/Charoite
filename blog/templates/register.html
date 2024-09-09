@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .error {
+            border-color: red;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
   {% include 'components/nav_bar.html' %}
@@ -18,29 +27,20 @@
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title">Sign up</h2>
-                        {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                <div class="alert alert-info">
-                                    <ul class="messages">
-                                        {% for message in messages %}
-                                            <li>{{ message }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        {% endwith %}
-                          <form method="post" action="{{ url_for('auth.register') }}">
+                          <form id="registrationForm" method="post" action="{{ url_for('auth.register') }}">
                             <div class="form-group">
                               <label for="username">Username:</label>
-                              <input type="text" class="form-control" name="username" required>
-                          </div>
+                              <input type="text" class="form-control" name="username" id="username" required>
+                              <div class="error-message" id="usernameError"></div>
+                            </div>
                             <div class="form-group">
                                 <label for="email">Email:</label>
                                 <input type="email" class="form-control" name="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password:</label>
-                                <input type="password" class="form-control" name="password" required>
+                                <input type="password" class="form-control" name="password" id="password" required>
+                                <div class="error-message" id="passwordError"></div>
                             </div>
                             <button type="submit" class="btn btn-primary">Register</button>
                         </form>
@@ -53,5 +53,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/file/scripts/script.js" type="module"></script>
 </body>
 </html>
