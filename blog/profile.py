@@ -5,6 +5,7 @@ from pymongo.errors import PyMongoError
 from datetime import datetime
 from bson import ObjectId
 import gridfs
+from .models import Notification
 
 
 profile_bp = Blueprint("profile", __name__)
@@ -134,21 +135,16 @@ def profile(db):
                         {'$addToSet': {'followers': user['username']}}
                     )
 
-                    # Create a notification for the friend
-                    notification_id = ObjectId()
-                    notification = {
-                        '_id': notification_id,
-                        'type': 'follow',
-                        'from_user': current_username,
-                        'to_user': username,
-                        'message': f'{current_username} has started following you.',
-                        'timestamp': datetime.utcnow()
-                    }
+                    notification = Notification(
+                        from_user=current_username,
+                        to_user=friend_username,
+                        message=f'{current_username} has started following you.'
+                    )
                     users_collection.update_one(
                         {'username': username},
-                        {'$push': {'notifications': notification}}
+                        {'$push': {'notifications': notification.to_dict()}}
                     )
-                    
+    
                     return redirect(url_for('profile.user_profile', username=friend['username']))
         return redirect(url_for('profile.home'))
 

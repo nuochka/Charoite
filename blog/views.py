@@ -1,15 +1,14 @@
 from flask import Blueprint, render_template, request, flash, url_for, redirect, session, g, jsonify, make_response
 from werkzeug.exceptions import RequestEntityTooLarge
 from bson import ObjectId
-import datetime
 import gridfs
 import markdown
+from .models import Post, Comment
 
 views_bp = Blueprint("views", __name__)
 
 def views(db):
     posts_collection = db['posts']
-    comments_colelction = db['comments']
     fs = gridfs.GridFS(db)
 
     @views_bp.before_request
@@ -38,9 +37,6 @@ def views(db):
             else:
                 author = session.get('username')
                 title = request.form.get('title')
-                post_id = ObjectId()
-                created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-
                 image_id = None
 
                 def allowed_file(filename):
@@ -55,19 +51,14 @@ def views(db):
                         flash('Invalid file type', 'danger')
                         return redirect(request.url)
                     
-                post_data = {
-                    '_id': post_id,
-                    'title': title,
-                    'content': text,
-                    'author': author,
-                    'created_date': created_date,
-                    'comments': [],
-                    'likes': 0,
-                    'liked_by': [],
-                    'image_id': image_id
-                }
+                post_data = Post(
+                    title=title,
+                    content=text,
+                    author=author,
+                    image_id=image_id
+                )
 
-                result = posts_collection.insert_one(post_data)
+                result = posts_collection.insert_one(post_data.to_dict())
 
                 if result.inserted_id:
                     flash('Post created', 'success')
@@ -126,18 +117,15 @@ def views(db):
             flash("Comment cannot be empty.", "error")
         else:
             author = session.get('username')
-            created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            comment_data = Comment(
+                author=author,
+                text=text
+            )
             post = posts_collection.find_one({'_id': ObjectId(post_id_obj)})
             
             if post:
-                comment_data = {
-                    'author': author,
-                    'text': text,
-                    'created_date': created_date
-                }
-
                 # Add new comment to the post.
-                posts_collection.update_one({'_id': post_id_obj}, {'$push': {'comments': comment_data}})
+                posts_collection.update_one({'_id': post_id_obj}, {'$push': {'comments': comment_data.to_dict()}})
                 flash('Comment added successfully.', 'success')
             else:
                 flash('Post does not exist.', 'error')
