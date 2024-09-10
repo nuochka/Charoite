@@ -135,9 +135,7 @@ def views(db):
     @views_bp.route("/delete-comment/<post_id>", methods=['POST'])
     def delete_comment(post_id):
         post_id_obj = ObjectId(post_id)
-        text = request.form.get('text')
-        author = session.get('username')
-        created_date_str = request.form.get('created_date')  
+        id = request.form.get('comment_id')
 
         try:
             post = posts_collection.find_one({'_id': post_id_obj})
@@ -146,21 +144,20 @@ def views(db):
                 return redirect(url_for('views.home'))
             
             comments = post.get('comments', [])
-            updated_comments = []
-
             comment_deleted = False
 
             for comment in comments:
-                comment_created_date = comment.get('created_date')
-                if comment['author'] == author and comment['text'] == text and str(comment_created_date) == created_date_str:
+                print(comment['_id'])
+                print(id)
+                
+                if str(comment['_id']) == id :
+                    comments.remove(comment)
                     comment_deleted = True
-                else:
-                    updated_comments.append(comment)
 
-            if comment_deleted:
+            if comment_deleted: 
                 result = posts_collection.update_one(
                     {'_id': post_id_obj},
-                    {'$set': {'comments': updated_comments}}
+                    {'$set': {'comments': comments}}
                 )
 
                 if result.modified_count > 0:

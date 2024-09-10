@@ -27,12 +27,14 @@ class Post:
 
 class Comment:
     def __init__(self, author, text):
+        self._id = ObjectId()
         self.author = author
         self.text = text
         self.created_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
     def to_dict(self):
         return {
+            '_id': ObjectId(),
             'author': self.author,
             'text': self.text,
             'created_date': self.created_date
