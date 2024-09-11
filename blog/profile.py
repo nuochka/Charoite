@@ -218,5 +218,18 @@ def profile(db):
             followers = user.get('followers', [])
             return jsonify([{'username': username} for username in followers])
         return jsonify({'error': 'User not found'}), 404
+    
+    @profile_bp.route('/post_div/<post_id>')
+    def post_div(post_id):
+        try:
+            post_id = ObjectId(post_id)
+        except Exception as e:
+            return "Invalid post ID", 400
+    
+        post = [posts_collection.find_one({"_id": post_id})]
+        if post:
+            return render_template('post.html', posts=post)
+        
+        return "Post not found", 404
 
     return profile_bp
