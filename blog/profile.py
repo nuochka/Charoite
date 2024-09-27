@@ -1,8 +1,5 @@
-import os
 from flask import Blueprint, render_template, session, flash, redirect, url_for, g, request, jsonify, make_response
 from werkzeug.utils import secure_filename
-from pymongo.errors import PyMongoError
-from datetime import datetime
 from bson import ObjectId
 import gridfs
 from .models import Notification
